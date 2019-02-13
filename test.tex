@@ -1,0 +1,488 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+\usepackage{hyperref}
+
+\title{IEEE CiS 2018 Readings and Notes}
+\author{Matthew Aitchison}
+\date{}
+
+\newcommand{\paper}[3]{\vspace{0.3cm} \textbf{#1} [#3] (\href{#2}{link})}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\maketitle
+
+The conference papers can be found at\\ \href{https://ieeexplore.ieee.org/xpl/mostRecentIssue.jsp?punumber=8473398}{https://ieeexplore.ieee.org/xpl/mostRecentIssue.jsp?punumber=8473398}.
+
+\section*{Papers (read)}
+
+\paper{Forward Model Approximation for General Video Game Learning}{https://ieeexplore.ieee.org/document/8490411}{1 citation}
+\href{https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8490411}{(link)}
+
+\begin{itemize}
+    \item Otto von Guericke University
+    \item Tries to build a 'general video game learning agent' for computer games.  Learns rules via symbolic knowledge.  I think they are calling this 'approximate forward model'.  I.e. learning the dynamics of the game.
+    \item Uses MCTS and BFS
+    \item Uses simulated game episodes (I like this)
+    \item References the \href{https://www.semanticscholar.org/paper/General-Game-Playing%3A-Overview-of-the-AAAI-Genesereth-Love/6656451fb5fbcb556cefffad144bd5c1fbfd7870}{General Game Playing challenge} from 2005
+    \item references the more recent \href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/viewPaper/11853}{General Video Game
+Playing Artificial Intelligence}
+    \item Uses Hierarchical Knowledge Bases
+    \item Lists some options for doing the planning phase.  BFS, MCTS, Rolling Horizion, Open Loop MCTS.
+    \item GVGAI has different tracks.  Play the game, learn the game.
+    \item Random bot placed 2nd in the GVGAI comp... oh no!
+    
+\end{itemize}
+
+\paper{Standard Economic Models in Nonstandard Settings – StarCraft: Brood War}{https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8490444}{}
+
+\begin{itemize}
+    \item Starcraft II broodwar bot
+    \item Applies a simple economics model used to describe countries behaviour which uses a `capital/labour' ratio.
+    \item Uses first person voice in paper.
+    \item Very much a heuristic based macro algorithm.
+    \item Uses something called \textit{GeneticHistoryManager}.
+    \item Cost of a unit is a combination of minerals, gas, and supply, which could be problematic as these are 3 different types of resources.
+    \item CD (Cobb-Douglas) typically uses fixed constants, but in SC2 these need to change over the game.
+\end{itemize}
+
+\paper{Automated Curriculum Learning by Rewarding Temporally Rare Events}{https://arxiv.org/abs/1803.07131}{2}
+
+Can learn without extrinsic rewards, which is helpful.
+
+Problem: sparse / delayed rewards 
+Solution: set reward levels by rarity.  Only need a set of positive events (i.e. not their magnitude)
+Curriculum learning: start on a simpler task, then move to are more complex one.
+Rewards at capped at 100, and decrease with $\frac{1}{\mu_t(\epislon_i)}$ which is the inverted temporal episodic mean occurrence of an event $\epsilon_i$ at time $t$.  This means that each event have equal importance.
+Does track quiet a few events that are engine specific (loss of ammo, pick up health pack etc)
+
+The take away here might simply be that using non sparse event like rewards (i.e. pick up health) is much better than the normal reward structure used.  What reward structure was used for A2C?  For example in thr heath gathering room no reward is given for picking up health packs with A2C but is with A2C-RoE.
+
+Could combine rarity of events with original reward function.
+
+Depends on events being designed.  Could this be done automatically?  What makes an event an event?  Maybe these are new states in a simplified MDP?
+
+Believes strongly that intrinsic rewards are important.  (I agree.)  
+
+\paper{Tabular Reinforcement Learning in Real-Time Strategy Games via Options}{https://ieeexplore.ieee.org/abstract/document/8490427}{0 citations}
+
+Big idea: Use options to implement long-term behaviour.
+
+Problem: RTS games need long-term and short-term decision making.
+
+Summary: Simplify game down by partioning states, then use options on them.  This is done in a perfect information context. Because of the reduced state space tabular methods can be used.
+
+Needs a state abstraction function (this is a problem right?) and a set of domain specific heuristics.
+
+Due to the large number of states, states are partitioned into clusters via state abstraction.
+
+Limited performance against SOTA search methods.
+
+Instead of using winning as a reward function used material reward.  This could be a problem, as the real goal is not material advantage, but winning. 
+
+Probably it would be better to just use functional approximation than try to do tabular methods.
+
+\paper{Human-Like Playtesting with Deep Learning}{https://ieeexplore.ieee.org/document/8490439}{}
+
+Big Idea: Difficulty balancing via Deep Learning
+
+Free to play games need to constantly add new content, which needs some kind of quality control / checking.  An important part of this is difficulty.
+
+Learns to predict human moves via a DNN. Could be improved by having different 'personas' rather than just averaging over all players.
+
+The model only gets around 32\% accuracy in terms of predicting human moves, but that is fine, there is probably a bit of noise in there.  This still exceeds random (which is 16\%)
+
+MCTS actually does really well getting 96\% of difficulty within `band'.  The CNN style methods get a better mean error, but worse out of band-ratio.
+
+\paper{+ Using a Team of General AI Algorithms to Assist Game Design and Testing
+}{https://ieeexplore.ieee.org/document/8490417}{}
+
+I quite like this paper, it uses a team of agents to give feedback to a designer about how expected behaviour of agents in a level.  This kind of rapid feedback could be very helpful. Game specific agents may not be adaptable enough. That agents act independent of the rules is important, is it allows the agent to properly test the rules.  For example, if an agent can jump to a location, but they are not supposed to, then ideally an agent would discover this. Also, developing one system, but for multiple games, could lead to a better more robust product. 
+
+Unfortunately this paper does not actually test the framework, just outlines it.
+
+\paper{Anxious Learning in Real-Time Heuristic Search}{https://ieeexplore.ieee.org/document/8490400}{short paper}
+
+Instead of pruning certain nodes from graph, just increase their heuristic cost (they call this anxiety).  This allows algorithms to escape `heuristic depression' without actually removing nodes from the search graph.  Results are mixed, showing improvement on some problems, but not with others.
+
+\paper{Applying Hybrid Reward Architecture to a Fighting Game AI}{https://ieeexplore.ieee.org/document/8490437}{short paper}
+Uses a multi head NN with engine features to play a fighting game.  Does quite well.  Not sure what the advantage of the multi head is?
+Hybrid Reward Architecture (HRA) was suggested in 2017 \url{https://arxiv.org/pdf/1706.04208.pdf}{here}.  The idea is to decompose the reward function into simpler functions.  In this case the `score` is decomposed into damage taken and damage received.  This bring about an interesting idea.  Why not decompose rewards based on their value alone.  I.e. predict positive rewards and negative rewards, or predict low, medium, and high level rewards.  This would give us multiple Q tables... hmm.. interesting.  Some of these may be more noisey than others, which may help to decompose the varience.... Hmmm...
+
+\paper{Bayesian Opponent Exploitation in Imperfect-Information Games}{https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8490452}{5 citations}
+
+Big Idea: An efficient algorithm for exact method for Baysiean best response.  
+
+Take away: only works on small sample sizes due to instability, but small sample sizes work fine with normal BBR.
+
+Nash equilibrium may not be optimal, there might be more than one of them and if opponents pick a different equilibrium performance guarantees may not hold.  However, from what I can see this will not be a stationary point right?  So both players will move?  Mentions extensive-form games.  Sometimes we must deviate from the equilibrium in order to exploit perceived weakness.
+
+They note that their algorithm does not correctly model the opponent dynamics (i.e. change in strategy, or deception).  An interesting way around this is to randomly play your Nemesis.  I like this idea.
+
+Aside: Nash equilibrium assumes both players can change their strategies, but in practice humans are limited in the strategies we can employ.  So Nash may not always be optimal given limitations in the other player.
+
+Goes into some detail about applying their approach to predicting opponent strategy in a specific case via a closed form solution.  Had numerical instability in their algorithm.  I wonder if this could be improved by rewriting the solver.  I.e. because Beta uses factorials, might be better to do log beta? or something?  Their algorithm is fast for small n (number of observations), and exact, but would not work for large n.  They went up to n=500. All the sampling algorithms they tested outperformed Nash...  Also Bayesian best response (BBR) worked really well. EBBR (their algorithm) only outperforms BBR as the samples increase, however this also creates numerical instability.
+
+\paper{Imitation Learning with Concurrent Actions in 3D Games}{https://ieeexplore.ieee.org/document/8490398}{4 citations}
+
+Interesting point: A3C does not use experience replay, but decorrelates the updates because each agent has its own environment.  This is clever.
+Talks about reward shaping.  I.e. an expert changing the reward function to encourage good behaviour.  (not mentioned in the paper - but the current approach to this is to randomly pick intrinsic rewards and then see which ones work for the enviroment).
+
+Modeling multiple actions per time step is important (i.e. move forward and shoot at the same time).  Can do this by defining an action for every subset of actions, but this is expensive, also some actions tend to go together, so it's better to find some kind of joint action representation.
+
+Imitation learning (IL): Learn to predict what an expert would do in this situation.  Can be an auxiliary task (to bootstrap learning), or the final goal.
+
+Their approach is to assume actions are conditionally independent given state.  Not sure if this really holds or not, but it means you can model the distribution with $N$ parameters instead of $2^N$.
+
+Sounds like Lillicrap 2015 did something similar with continuous action spaces, this is just the discrete version?  In the end they simply output the probability of taking each action, then roll dice for each action, rather than take the max.  This seems fine.  It's be most obvious option I guess.  Another option would be to simply threshold at 0.5 or something.
+
+Used IL on policy learning only, not on value function.  Good idea.
+
+They use IL concurrently with TD learning to regularize the TD.  Interesting...
+
+Question: how much does the radar map help?  Does the agent just use this??
+
+\paper{Variational Information Maximisation for Intrinsically Motivated Reinforcement Learning
+}{http://papers.nips.cc/paper/5668-variational-information-maximisation-for-intrinsically-motivated-reinforcement-learning}{84 citations (NIPS)}
+
+Puts some interesting ideas together.  Intrinsic motivation, empowerment, mutual information.
+
+Problem: Agents are often in environments that lack rewards, or where the rewards are sparse.
+
+
+
+\textbf{Intrinsic motivation:} Equip agent with internal drives.  Such as hunger, boredom, curisoty, that allows agents to act \textit{meaningfuly} in a reward-sparse world.
+
+\textbf{Variational inference:}
+
+\textbf{Mutual Information}: How much one varaible tells us about the other.
+
+\textbf{Empowerment:}\textbf
+
+Question: What is variational inference.
+
+\paper{Intrinsically motivated reinforcement learning}{http://papers.nips.cc/paper/2552-intrinsically-motivated-reinforcement-learning.pdf}{461 citations}
+
+...
+
+\section*{Papers (abstract only)}
+
+\paper{+ Human-Like Playtesting with Deep Learning}{https://ieeexplore.ieee.org/document/8490442/}{}
+
+Use DNN to predict what a human would do in a situation.  Useful for automated playtesting.  Also gives difficulty.
+
+\paper{Scale-Free Evolutionary Level Generation}{https://ieeexplore.ieee.org/document/8490366}{}
+
+Procedural level generation (using graphs) using EA.
+
+\paper{Generating Novice Heuristics for Post-Flop Poker}{https://ieeexplore.ieee.org/document/8490415}{4 citations}
+
+Tries to learn heuristics for playing a simplified version of poker.  Uses `frugal' and shallow trees to learn simple `if this then that' rules.
+
+\paper{- Scenarios for Educational and Game Activities using Internet of Things Data}{https://ieeexplore.ieee.org/document/8490370}{}
+
+This seems to just be using IoT / gamification to teach children about environmental issues.
+
+\paper{- Intelligent Middle-Level Game Control}{https://ieeexplore.ieee.org/document/8490407}{}
+
+Tries to bridge the gap between 'high-level' control such as jumping and low level control, such as joint control (e.g. QWOP).
+
+
+\paper{- A Plot from the Stars: Educational Game Development for Teaching Basic Mathematical Functions}{https://ieeexplore.ieee.org/document/8490362}{}
+
+Abstract is just a key-word list.  But content may be interesting. 
+
+\paper{+ Tabular Reinforcement Learning in Real-Time Strategy Games via Options}{https://ieeexplore.ieee.org/document/8490427}{}
+
+Talks about using \textit{options} to handle long term decision making in RTS games.
+
+\paper{Inferring Design Constraints From Game Ruleset Analysis}{https://ieeexplore.ieee.org/document/8490412}{}
+
+Rules are important for games, but need testing.  Finds simplest set of rules to describe the system. (I think)
+
+\paper{++ Automated Curriculum Learning by Rewarding Temporally Rare Events}{https://ieeexplore.ieee.org/document/8490448}{2 citations}
+
+Looks very interesting.  Uses Rarity of Events (RoE) to automatically scale reward based on how many times the reward has occured.  Tested on \textit{VizDoom}.  Not sure how it connects to curriculum learning though.
+
+\paper{- InLife: Combining Real Life with Serious Games using IoT}{https://ieeexplore.ieee.org/document/8490434}{1 citation}
+
+Another gamification + IoT paper...  
+
+\paper{+ Bayesian Opponent Exploitation in Imperfect-Information Games}{https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8490452}{5 citations}
+
+Brings up some really good points.  For example, Nash might not really be optimal if the goal is to exploit your opponent. Looks like this goes into the theory / maths a bit which is nice.
+
+\paper{Analysis of Self-Adaptive Monte Carlo Tree Search in General Video Game Playing}{https://ieeexplore.ieee.org/document/8490402}{short paper}
+
+This is on general purpose video game playing (GVGP).  Looks into on-line parameter tuning for MCTS but has limited impact.
+
+\paper{Modern Techniques for Ancient Games}{https://ieeexplore.ieee.org/document/8490420}{}
+
+Describes the Digital Ludeme Project, a project to understand early games.
+
+\paper{+Imitation Learning with Concurrent Actions in 3D Games}{https://ieeexplore.ieee.org/document/8490398}{4 citations}
+
+Uses imitation to improve training time.  Also uses concurrent actions which improves performance over single actions.  Maybe not that ground breaking but worth a read.
+
+\paper{*Accelerating Empowerment Computation with UCT Tree Search}{https://ieeexplore.ieee.org/document/8490447}{2 citations}
+
+Talks about \textit{Empowerment}, but I'm not sure what that is.  Talks about intrinsic reward... interesting.  Modifies UCT MCTS to work with maximizing empowerment.  Uses a Minecraft like environment to evaluate.
+
+\paper{Game AI Research with Fast Planet Wars Variants}{https://ieeexplore.ieee.org/document/8490377}{2 citations - short paper}
+
+Talks about a game designed for AI research that is especially fast to execute, but is challenging.
+
+\paper{+ Using a Surrogate Model of Gameplay for Automated Level Design}{https://ieeexplore.ieee.org/document/8490425}{2 citations}
+
+Uses DNN to find balanced rules / maps.  Could be good for level design.
+
+\paper{+ A Refined 3D Dataset for the Analysis of Player Actions in Exertion Games}{https://ieeexplore.ieee.org/document/8490458}{short paper}
+
+Deals with noisy data in exercise games.
+
+\paper{A Virtual Agent Toolkit for Serious Games Developers}{https://ieeexplore.ieee.org/document/8490399}[7]
+
+Toolkit for serious games in terms of socially intelligent characters.
+
+\paper{Multi-Agent Pathfinding with Real-Time Heuristic Search}{https://ieeexplore.ieee.org/document/8490436}{}
+
+Just a pathfinding algorithm.  Probably really interestings, but not to me.
+
+\paper{++ New And Surprising Ways to Be Mean}{https://ieeexplore.ieee.org/document/8490453}{}
+
+Props on the title.  Talks about trying to make NPC characters beleivable.  Uses empowerment maximization.
+
+\paper{Improving Hearthstone AI by Combining MCTS and Supervised Learning Algorithms}{https://ieeexplore.ieee.org/document/8490368}{3 citations}
+
+Uses MCTS to play heartstone (partial information)
+
+\paper{
+Promotion of Learning Motivation through Individualization of Learner-Game Interaction}{https://ieeexplore.ieee.org/document/8490371}{1 citation}
+
+Experimental results on a serious game with emotion-based adaptation.  Tries to find 'flow', i.e. not too hard, not to easy.
+
+
+\paper{+ Learning Map-Independent Evaluation Functions for Real-Time Strategy Games}{https://ieeexplore.ieee.org/document/8490369}{7}
+
+Learning generalized representation of maps in RTS games and evaluates using MCTS.
+
+\paper{*Web-Based Interface for Data Labeling in StarCraft}{https://ieeexplore.ieee.org/document/8490451}{short paper}
+
+Visual display of SC2 replays via a web interface.
+
+\paper{Geometry and Generation of a New Graph Planarity Game}{https://ieeexplore.ieee.org/document/8490404}{2 citations}
+
+Created a new game SWAP PLANARITY, which is based off the planarity game.  This is graph based.  Some analysis is done on the new game.
+
+\paper{Applying Commitment to Churn and Remaining Players Lifetime Prediction}{https://ieeexplore.ieee.org/document/8490443}{}
+
+Looks into player churn, and player's remaining lifetime.  Not too sure what commitment is or how it applies to this problem.  I guess it's players committment to the game?
+
+\paper{Q-DeckRec: A Fast Deck Recommendation System for Collectible Card Games}{https://ieeexplore.ieee.org/document/8490446}{1 citation}
+
+New algorithm for deck building in Collectable Card Games (CCG).  No information in abstract about what method they used, but the claim is it is better than previous algorithms.
+
+\paper{+ Integrated Balancing of an RTS Game: Case Study and Toolbox Refinement}{https://ieeexplore.ieee.org/document/8490426}{}
+
+Automated balancing in a Red Alert clone.
+
+\paper{$\mu$CCG, a CCG-based Game-Playing Agent for $\mu$RTS}{https://ieeexplore.ieee.org/document/8490372/}{}
+
+Presents a new hierarchical adversarial planning algorithm.
+
+\paper{Deep RTS: A Game Environment for Deep Reinforcement Learning in Real-Time Strategy Games}{https://ieeexplore.ieee.org/document/8490409}{}
+
+RTS games are either far to simple, or much too complex.  Introduces a new RTS game for AI research.  Is a little odd that is mentions that DQN beets random play 70\% of the time.  How is it possiable to loose to random play 30\% of the time?
+
+\paper{Monte Carlo Methods for the Game Kingdomino}{https://ieeexplore.ieee.org/document/8490419}{}
+
+Evaluation of various algorithms (MC based) on Kingdomino a multiplayer game.  Says MCE is the best?
+
+\paper{Ensemble Decision Making in Real-Time Games}{https://ieeexplore.ieee.org/document/8490401}{}
+
+Decomposes Ms. Pacman into sub-goals and builds an ensemble model.
+
+\paper{* A Machine-Learning Item Recommendation System for Video Games}{https://ieeexplore.ieee.org/document/8490456}{1 citation short paper}
+
+Details two game recommendation systems, one is an ensemble model - trees I think, and the other a DNN.  They talk about integrating this into the game.  I wonder if they consider \textit{how} people play, not just \textit{what} people play.
+
+\paper{Evolving Number Sentence Morphing Puzzles}{https://ieeexplore.ieee.org/document/8490374}{}
+
+Not super interesting to me.  Just talks about edit puzzles.
+
+\paper{* An Eye Gaze Model for Controlling the Display of Social Status in Believable Virtual Humans}{https://ieeexplore.ieee.org/document/8490373}{}
+
+Oh... this is really interesting.  Developes a `language' for eye gaze to communicate things like social status.  Works in terms of length of gaze, movement velocity etc.  Used Amazon Mechanical Turk to test effect of eye gaze on people.  Results fall just under the 0.05 threshold with is a little suspicious.
+
+\paper{Towards Game-based Metrics for Computational Co-Creativity
+}{https://ieeexplore.ieee.org/document/8490429}{1 citation}
+
+Considers metrics such as novelty, value, surprise and interestingness.
+
+\paper{+ Deep Reinforcement Learning for General Video Game AI}{https://ieeexplore.ieee.org/document/8490422}{2 citations}
+
+Another GVGAI paper.  Interfaces GVGAI with OpenGym.  Also compares to ALE.
+
+\paper{Predicting Skill Learning in a Large, Longitudinal MOBA Dataset}{https://ieeexplore.ieee.org/document/8490431}{2 citations}
+
+Looks into correlation between early learning rate and long term performance in MOBAs.  This is quite interesting, but off topic for me.
+
+\paper{A Social Science-based Approach to Explanations for (Game) AI}{https://ieeexplore.ieee.org/document/8490361/}{2}
+
+Takes a bottom-up approach to explanations for AI.
+
+\paper{+ Applying Hybrid Reward Architecture to a Fighting Game AI}{https://ieeexplore.ieee.org/document/8490437}{short paper}
+
+A previous paper used Hybrid Reward Architecture (HRA) to achive a perfect score in Ms. Packman.  This works with reward decomposition.  This paper extends HRA to a more complex game (in terms of actions).
+
+\paper{* Anxious Learning in Real-Time Heuristic Search
+}{https://ieeexplore.ieee.org/document/8490400}{short paper}
+
+Maintains `anxiety' which increases due to state visits, and decreases over time.  How is this anxiety?
+
+\paper{Evolutionary Multi-objective Optimization of Real-Time Strategy Micro
+}{https://ieeexplore.ieee.org/document/8490375}{1 citation}
+
+Handles micro in RTS games using a multi-objective approach.
+
+\paper{- Toward General Mathematical Game Playing Agents}{https://ieeexplore.ieee.org/document/8490428}{7}
+
+I'm not sure what is meant by `mathematical' game playing.  Talks about prisoners delema, and rock-paper-scisors.  They talk about identifying when the game being played changes.
+
+\paper{Shallow Decision-Making Analysis in General Video Game Playing
+}{https://ieeexplore.ieee.org/document/8490365/}{}
+
+Looks at more metrics than just win ratio, giving shallow introspection into the agents decision making process.
+
+\paper{Neuroevolution for RTS Micro}{https://ieeexplore.ieee.org/document/8490457}{1 citations}
+
+Use evolutionary strategies to learn micro.
+
+\paper{++ Learning Battles in ViZDoom via Deep Reinforcement Learning
+}{https://ieeexplore.ieee.org/document/8490423}{short paper}
+
+Actor Critic on VizDoom
+
+\paper{* Wall Building in the Game of StarCraft with Terrain Considerations
+}{https://ieeexplore.ieee.org/document/8490413}{5}
+
+Looks are wall building in broodwar.
+
+\paper{Monster Carlo: An MCTS-based Framework for Machine Playtesting Unity Games
+}{https://ieeexplore.ieee.org/document/8490363}{1 citation}
+
+Interface to the Unity platform.
+
+\paper{Building Evaluation Functions for Chess and Shogi with Uniformity Regularization Networks}{https://ieeexplore.ieee.org/document/8490455}{3 citations}
+
+Applies uniformity regularization to learning Chess and Shogi.  This is better than L2 (although is is better than no regularization?)
+
+\paper{Skilled Experience Catalogue: A Skill-Balancing Mechanism for Non-Player Characters using Reinforcement Learning}{https://ieeexplore.ieee.org/document/8490405}{}
+
+Matches skill of NPC to player in FPS games.  This is done with a `timeline' of experience, allowing the agent to jump back and forward through it's experience.  (i.e. to provide an experienced opponent, or an inexperienced one).  
+
+\paper{Evolutionary MCTS for Multi-Action Adversarial Games}{https://ieeexplore.ieee.org/document/8490403}{}
+
+Uses an evolutionaly version of MCTS on Hero Academy.
+
+\paper{+ A Critical Analysis of Punishment in Public Goods Games
+}{https://ieeexplore.ieee.org/document/8490421}{short paper}
+
+Very interesting.  Worth a read.  `Finally, we argue punishment as a strategy in social dilemmas is never altruistic.'.  Not related to my field though.
+
+\paper{The Influence of Feedback Choice on University Students’ Revision Choices and Performance in a Digital Assessment Game
+}{https://ieeexplore.ieee.org/document/8490406}{7}
+
+An interesting paper.  Looks at whether choosing to receive feedback or being given feedback without choice makes a difference in performance.  They say no difference, but it would be interesting to see this with a larger sample size.
+
+\paper{Regular Language Inference for Learning Rules of Simplified Boardgames}{https://ieeexplore.ieee.org/document/8490435}{}
+
+Seems to look into learning game rules via natual langauge.
+
+\paper{Strategic Features and Terrain Generation for Balanced Heroes of Might and Magic III Maps}{https://ieeexplore.ieee.org/document/8490430}{}
+
+Create balanced multiplayer maps. Uses graph grammars.  Uses game Heroes of Might and Magic III.
+
+\paper{The Evolutionary Race: Improving the Process of Evaluating Car Controllers in Racing Simulators
+}{https://ieeexplore.ieee.org/document/8490364/}{}
+
+Uses EA on racing in different environments.
+
+\paper{Multi-Parameterised Matchmaking: A Framework}{https://ieeexplore.ieee.org/document/8490414/}{short paper}
+
+Framework for analyzing matchmaking systems such as ELO
+
+\paper{Exploiting IoT Technologies for Personalized Learning
+}{https://ieeexplore.ieee.org/document/8490454}{}
+
+Serious games, and MaTHiSiS (which is a sponsor I think).
+
+\paper{Evolving Agents for the Hanabi 2018 CIG Competition
+}{https://ieeexplore.ieee.org/document/8490449}{3 citations}
+
+Co-op card game with hidden information.  Gentic rule based agent.
+
+\paper{+ Using a Team of General AI Algorithms to Assist Game Design and Testing
+}{https://ieeexplore.ieee.org/document/8490417}{}
+
+General Video Game Playing with intrinsic rewards.  This leads to game play information, and bug fixing.
+
+\paper{General Win Prediction from Agent Experience
+}{https://ieeexplore.ieee.org/document/8490439}{}
+
+I don't understand the contribution here.  ML agents typically predict their win rate from current state. (V(s)).
+
+\paper{Monte-Carlo Tree Search Implementation of Fighting Game AIs Having Personas
+}{https://ieeexplore.ieee.org/document/8490367/}{1 citation}
+
+Defines personas as a play style.  Uses Puppet-Master MCTS.
+
+\paper{* Using Discrete Time Markov Chains for Control of Idle Character Animation
+}{https://ieeexplore.ieee.org/document/8490450}{short paper}
+
+Need to read this, I don't understand the abstract.
+
+\paper{Monte-Carlo Tree Search for Implementation of Dynamic Difficulty Adjustment Fighting Game AIs Having Believable Behaviors}{https://ieeexplore.ieee.org/document/8490376}{2 citations}
+
+Adjust difficulty of agent while maintaining believably.  Evaluates actions `believably' to avoid things like intentionally taking damage.
+
+\paper{Explainable AI for Designers: A Human-Centered Perspective on Mixed-Initiative Co-Creation}{https://ieeexplore.ieee.org/document/8490433}{4 citations}
+
+Game designers co-creating with AI.  This is actually a promising area.  Proposes eXplainable AI for Designers (XAID).
+
+\paper{Learning to Play General Video-Games via an Object Embedding Network
+}{https://ieeexplore.ieee.org/document/8490438}{1 citation}
+
+Says `More importantly, directly working on pixel-based raw video data is substantially distinct from what a human player doe'.  But I don't think that is right...  Paper talks about working from object representations instead.  I don't think they understand the purpose of pixeld based input. 
+\par
+They do actually back this up with a \href{https://arxiv.org/abs/1802.10217}{reference}. Basically says humans bring a lot of prior knowledge to a game (i.e. what a door is, that a door and key go together).
+
+\section*{Themes}
+
+\begin{itemize}
+    \item Empowerment (agents control over future)
+    \item Serious games (especially with IoT)
+    \item Using ML to balance games / test games.
+    \item People really like RTS games (and card games to a lesser extent)
+    \item Believable NPCs / opponents
+    \item General video game ai (GVGAI)
+    \item Genetic algorithms / Evolutionary algorithms.
+    \item Everyone is using MCTS
+\end{itemize}
+
+\section*{Notes / Ideas}
+
+\begin{itemize}
+    \item A lot of papers talk about balance.  One way to extend this would be to look at balance at different difficult levels.  I.e. a good map is balanced for novice and expert players.
+    \item A good way to do curriculum learning may be to move from predicting observations to predicting rewards.
+    \item This is a bit of an aside, but sometimes you can choose to 'not' do actions.  I.e. given a state indicate that for x steps we will not perform some action.  I think AlphaStar uses this.
+    \item One way to do planning is to have multiply MDPs, the MDP can decide to send attention to a new MDP, which then runs, or given some condition could bounce back.
+    \item Can we 'evolve' levels to optimize for 'fun'.  Would this make a good game?  How would fun be measured?
+    \item Build separate Q tables for low, medium, and high rewards (maybe negative and positive).  This may help decompose the variance, and reduce the need for clipping.  ALE could be a good way to do this.
+\end{itemize}
+
+
+\end{document}
